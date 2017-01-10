@@ -216,7 +216,8 @@ class Weather
     private function getWeather($query, $days = 1, $units = 'internal', $type = 0, $lang = 'en')
     {
         $forecast = ($type == 0) ? 'forecast/daily?' : 'weather?';
-        return $this->request("http://api.openweathermap.org/data/2.5/{$forecast}{$query}&cnt={$days}&units={$units}&mode=json&lang={$lang}&appid=1ed8312e4658870d20530dbe489aa0bd");
+        $apiKey = env('OWM_API_KEY', '');
+        return $this->request("http://api.openweathermap.org/data/2.5/{$forecast}{$query}&cnt={$days}&units={$units}&mode=json&lang={$lang}&appid={$apiKey}");
     }
 
     private function request($url)
