@@ -18,9 +18,6 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 	 */
 	public function boot()
 	{
-        // Register the package namespace
-        $this->package('torann/laravel-weather');
-
 		// Auto create app alias with boot method.
 		AliasLoader::getInstance()->alias('Weather', 'Torann\LaravelWeather\Facade');
 	}
@@ -35,7 +32,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 		$this->app['torann.weather'] = $this->app->share(function($app)
 		{
             // Get config
-            $config = $app->config->get('laravel-weather::config', array());
+            $config = config('weather');
 
 			return new Weather($app->cache, $app->view, $config);
 		});
