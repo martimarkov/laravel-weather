@@ -1,7 +1,7 @@
 <?php namespace Torann\LaravelWeather;
 
-use Illuminate\View\Factory;
 use Illuminate\Cache\CacheManager;
+use Illuminate\View\Factory;
 
 class Weather
 {
@@ -110,70 +110,86 @@ class Weather
         $forecast = $this->getWeather($options['query'], $options['days'], $options['units']);
 
         // Render view
-        $html = $this->view->make("{$this->config['views']}.{$options['style']}", array(
+        $data = array(
             'current'  => $current,
             'forecast' => $forecast,
             'units'    => $options['units'],
             'date'     => $options['date']
-        ))->render();
+        );
 
         // Add to cache
         if ($this->config['cache']) {
-            $this->cache->put($cacheKey, $html, $this->config['cache']);
+            $this->cache->put($cacheKey, $data, $this->config['cache']);
         }
 
-        return $html;
+        return $data;
     }
 
     public function getIcon($code)
     {
         switch ($code) {
-            case 200 : return '0'; break;
-            case 201 : return '0'; break;
-            case 202 : return '0'; break;
-            case 210 : return '0'; break;
-            case 211 : return '0'; break;
-            case 212 : return '0'; break;
-            case 221 : return '0'; break;
-            case 230 : return '0'; break;
-            case 231 : return '0'; break;
-            case 232 : return '0'; break;
-            case 300 : return 'R'; break;
-            case 301 : return 'R'; break;
-            case 302 : return 'R'; break;
-            case 310 : return 'R'; break;
-            case 311 : return 'R'; break;
-            case 312 : return 'R'; break;
-            case 321 : return 'R'; break;
-            case 500 : return 'Q'; break;
-            case 501 : return 'Q'; break;
-            case 502 : return 'Q'; break;
-            case 503 : return 'Q'; break;
-            case 504 : return 'Q'; break;
-            case 511 : return 'X'; break;
-            case 520 : return 'R'; break;
-            case 521 : return 'R'; break;
-            case 522 : return 'R'; break;
-            case 600 : return 'U'; break;
-            case 601 : return 'W'; break;
-            case 602 : return 'W'; break;
-            case 611 : return 'W'; break;
-            case 621 : return 'W'; break;
-            case 701 : return 'M'; break;
-            case 711 : return 'M'; break;
-            case 721 : return 'M'; break;
-            case 731 : return 'M'; break;
-            case 741 : return 'M'; break;
-            case 800 : return 'B'; break;
-            case 801 : return 'H'; break;
-            case 802 : return 'N'; break;
-            case 803 : return 'Y'; break;
-            case 804 : return 'Y'; break;
-            case 900 : return 'F'; break;
-            case 901 : return 'F'; break;
-            case 902 : return 'F'; break;
-            case 905 : return 'F'; break;
-            case 906 : return 'G'; break;
+            case 200 :
+            case 201 :
+            case 202 :
+            case 210 :
+            case 211 :
+            case 212 :
+            case 230 :
+            case 221 :
+            case 231 :
+            case 232 :
+                return 'icon-weather-lightning';
+            case 300 :
+            case 301 :
+            case 302 :
+            case 310 :
+            case 311 :
+            case 312 :
+            case 313 :
+            case 314 :
+            case 321 :
+            case 511:
+            case 520:
+            case 521:
+            case 522:
+            case 531:
+                return 'icon-weather-pouring';
+            case 500 :
+            case 501 :
+            case 502 :
+            case 503 :
+            case 504 :
+                return 'icon-weather-rainy';
+            case 600:
+            case 601:
+            case 602:
+            case 611:
+            case 612:
+            case 615:
+            case 616:
+            case 620:
+            case 621:
+            case 622:
+                return 'icon-weather-snowy';
+            case 701:
+            case 711:
+            case 721:
+            case 731:
+            case 741:
+            case 751:
+            case 761:
+            case 762:
+            case 771:
+            case 781:
+                return 'icon-weather-fog';
+            case 800:
+                return 'icon-weather-sunny';
+            case 801 :
+                return 'icon-weather-partlycloudy';
+            case 802 :
+            case 803 :
+            case 804 :
+                return 'icon-weather-cloudy';
         }
     }
 
@@ -200,7 +216,8 @@ class Weather
     private function getWeather($query, $days = 1, $units = 'internal', $type = 0, $lang = 'en')
     {
         $forecast = ($type == 0) ? 'forecast/daily?' : 'weather?';
-        return $this->request("http://api.openweathermap.org/data/2.5/{$forecast}{$query}&cnt={$days}&units={$units}&mode=json&lang={$lang}");
+        $apiKey = env('OWM_API_KEY', '');
+        return $this->request("http://api.openweathermap.org/data/2.5/{$forecast}{$query}&cnt={$days}&units={$units}&mode=json&lang={$lang}&appid={$apiKey}");
     }
 
     private function request($url)
