@@ -29,10 +29,10 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 	 */
 	public function register()
 	{
-		$this->app['torann.weather'] = $this->app->share(function($app)
+		$this->app['torann.weather'] = $this->app->singleton(function($app)
 		{
-            // Get config
-            $config = config('weather');
+      // Get config
+      $config = config('weather');
 
 			return new Weather($app->cache, $app->view, $config);
 		});
